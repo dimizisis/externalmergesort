@@ -3,18 +3,22 @@ package Visualization;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.Timer;
+import javax.swing.UIManager;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import java.awt.BorderLayout;
 
@@ -54,17 +58,23 @@ public class VisualizationFrame {
 		
 		/* enterPass0Panel only contains a button. */
 		
-		JPanel enterPass0Panel = new JPanel();
-		enterPass0Panel.setBackground(SystemColor.inactiveCaption);
-		enterPass0Panel.setBounds(10, 85, 643, 38);
-		frame.getContentPane().add(enterPass0Panel);
-		enterPass0Panel.setLayout(new BorderLayout(0, 0));
+		JPanel btnPassPanel = new JPanel();
+		btnPassPanel.setBackground(SystemColor.inactiveCaption);
+		btnPassPanel.setBounds(10, 85, 643, 38);
+		frame.getContentPane().add(btnPassPanel);
+		btnPassPanel.setLayout(new BorderLayout(0, 0));
 		
 		/* btnEnterPass0 enters you in first pass of external merge sort. */
 		
 		JButton btnEnterPass0 = new JButton("Enter Pass 0");
-		enterPass0Panel.add(btnEnterPass0, BorderLayout.CENTER);
+		btnPassPanel.add(btnEnterPass0, BorderLayout.CENTER);
 		btnEnterPass0.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		
+		JPanel passPanel0 = new JPanel();
+		passPanel0.setBackground(SystemColor.inactiveCaption);
+		passPanel0.setBounds(10, 134, 643, 83);
+		frame.getContentPane().add(passPanel0);
+		passPanel0.setLayout(new BoxLayout(passPanel0, BoxLayout.X_AXIS));
 		
 		/* Keeping an ArrayList with panels (panels = array's pages). */
 		
@@ -82,44 +92,245 @@ public class VisualizationFrame {
 			
 			/* Visualization with 2 records. */
 			
-			JTextField rec1 = new JTextField("");
-			JTextField rec2 = new JTextField("");
-			
 			/* Setting records' appearance. */
 			
-			setRecordAppearance(rec1);
-			setRecordAppearance(rec2);
+			JTextField tempRec = setRecordAppearance(new JTextField(""));
 			
 			/* Keeping records' text fields in ArrayList. */
 			
-			records.add(rec1);
-			records.add(rec2);
+			records.add(tempRec);
 			
 			/* Add records' text fields in page. */
 			
-			array.get(i).add(rec1);
-			array.get(i).add(Box.createRigidArea(new Dimension(3,0)));
-			array.get(i).add(rec2);
+			array.get(array.size() - 1).add(tempRec);
+			
+			/* Adding gap between records text fields. */
+			
+			array.get(array.size() - 1).add(Box.createRigidArea(new Dimension(3,0)));
+			
+			/* Setting records' appearance. */
+			
+			tempRec = setRecordAppearance(new JTextField(""));
+			
+			/* Add records' text fields in page. */
+			
+			records.add(tempRec);
+			
+			/* Add records' text fields in page. */
+			
+			array.get(array.size() - 1).add(tempRec);
 			
 			/* Centerize */
 			
-			array.get(i).setAlignmentX(Component.CENTER_ALIGNMENT);
+			array.get(array.size() - 1).setAlignmentX(Component.CENTER_ALIGNMENT);
 			
 			/* Adding page to array panel. */
 			
-			initialPanel.add(array.get(i));
+			initialPanel.add(array.get(array.size() - 1));
 			
-			array.get(i).setBorder(BorderFactory.createLineBorder(Color.black));
+			/* Black border line for each page of array. */
 			
-			array.get(i).add(Box.createRigidArea(new Dimension(10,0)));
+			array.get(array.size() - 1).setBorder(BorderFactory.createLineBorder(Color.black));
+			
+			/* Adding gap between pages. */
+			
+			array.get(array.size() - 1).add(Box.createRigidArea(new Dimension(10,0)));
 
-		}	
+		}
+		
+		btnEnterPass0.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				
+				for(int i=0;i<N;i++) {
+					
+					/* Add new page. */
+					
+					array.add(new JPanel());
+					
+					array.get(array.size() - 1).setPreferredSize(new Dimension(65,83));
+					
+					array.get(array.size() - 1).setMaximumSize(new Dimension(array.get(0).getSize()));
+					
+					array.get(array.size() - 1).setMinimumSize(new Dimension(array.get(0).getSize()));
+					
+					array.get(array.size() - 1).setLayout(new BoxLayout(array.get(array.size() - 1), BoxLayout.Y_AXIS));
+					
+					/* Visualization with 2 records. */
+					
+					/* Setting records' appearance. */
+					
+					JTextField tempRec = setRecordAppearance(new JTextField(""));
+					
+					/* Keeping records' text fields in ArrayList. */
+					
+					records.add(tempRec);
+					
+					/* Add records' text fields in page. */
+					
+					array.get(array.size() - 1).add(tempRec);
+					
+					/* Adding gap between records text fields. */
+					
+					array.get(array.size() - 1).add(Box.createRigidArea(new Dimension(3,0)));
+					
+					/* Setting records' appearance. */
+					
+					tempRec = setRecordAppearance(new JTextField(""));
+					
+					/* Add records' text fields in page. */
+					
+					records.add(tempRec);
+					
+					/* Add records' text fields in page. */
+					
+					array.get(array.size() - 1).add(tempRec);
+					
+					/* Centerize */
+					
+					array.get(array.size() - 1).setAlignmentX(Component.CENTER_ALIGNMENT);
+					
+					/* Adding page to array panel. */
+					
+					passPanel0.add(array.get(array.size() - 1));
+					
+					/* Black border line for each page of array. */
+					
+					array.get(array.size() - 1).setBorder(BorderFactory.createLineBorder(Color.black));
+
+				}
+				
+				TestThread b = new TestThread(records,array);
+				
+			/*	for(int i=0;i<records.size();i++) {
+					records.get(i).setText("record"+i);
+				} */
+		        
+				new Thread(b).start();
+		            	
+		            	
+		            }
+
+		});
 		
 	}
 	
-	private void setRecordAppearance(JTextField rec) {
+	class TestThread implements Runnable{
 		
-		/* This method sets specific appearance for records' text fields. */
+		private ArrayList<JTextField> records;
+		private ArrayList<JPanel> array;
+		
+		public TestThread(ArrayList<JTextField> records, ArrayList<JPanel> array) {
+			this.records = records;
+			this.array = array;
+		}
+		
+
+		@Override
+		public void run() {
+					int i=0;
+					while(true){
+						
+						if (i<=N-1) array.get(i).setBackground(Color.green);
+						
+						if (i>0) array.get(i-1).setBackground(UIManager.getColor ("Panel.background"));
+						
+						if (i>=N) break;
+						
+						int min = Integer.min(Integer.parseInt(records.get(i+i).getText()), Integer.parseInt(records.get(i+i+1).getText()));
+						int max = Integer.max(Integer.parseInt(records.get(i+i).getText()), Integer.parseInt(records.get(i+i+1).getText()));
+						
+						System.out.println(min +" "+max);
+						
+						Timer timer1;
+						Timer timer2;
+					        
+					    if (records.get(i).getText().equals(String.valueOf(min))) {
+					    	timer1 = new Timer(4000, new listener1(i,max,records, i+1));
+					    	timer2 = new Timer(2000, new listener2(i,min,records, i));
+					    }
+					    else {
+					    	timer1 = new Timer(4000, new listener1(i,max,records, i));
+					    	timer2 = new Timer(2000, new listener2(i,min,records, i+1));
+					    }
+						
+					    timer1.setRepeats(false);
+					    timer2.setRepeats(false);
+					    timer1.start();
+					    timer2.start();
+					    
+					    try {
+							Thread.sleep(4000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					        
+					    ++i;
+
+					}
+			
+		}
+		
+	}
+
+	class listener1 implements ActionListener {
+		
+		private int i,max, recIndex;
+		private ArrayList<JTextField> recs;
+		
+		public listener1(int i, int max, ArrayList<JTextField> recs, int recIndex) {
+			this.max = max;
+			this.i = i;
+			this.recs = recs;
+			this.recIndex = recIndex;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    
+		//	recs.get(recIndex).setText("");
+			
+			if(N==1)
+				recs.get(3).setText(String.valueOf(max));
+			
+			else
+				recs.get(2*N+2*i+1).setText(String.valueOf(max));
+			
+		}
+		
+	}
+	
+class listener2 implements ActionListener {
+		
+		private int i,min,recIndex;
+		private ArrayList<JTextField> recs;
+		
+		public listener2(int i, int min, ArrayList<JTextField> recs, int recIndex) {
+			this.min = min;
+			this.i = i;
+			this.recs = recs;
+			this.recIndex = recIndex;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			
+		//	recs.get(recIndex).setText("");
+			
+			if (N==1)
+				recs.get(2).setText(String.valueOf(min));
+			
+			else
+				recs.get(2*N+2*i).setText(String.valueOf(min));
+		}
+		
+	}
+	
+	private JTextField setRecordAppearance(JTextField rec) {
+		
+		/* This method sets specific appearance for records' text fields and returns a JTextField. */
 		
 		Font font = new Font("SansSerif", Font.BOLD, 18);
 		
@@ -128,7 +339,7 @@ public class VisualizationFrame {
 		rec.setPreferredSize(new Dimension(40,33));
 		rec.setMaximumSize(new Dimension(rec.getPreferredSize()));
 		
+		return rec;
+		
 	}
-	
-
 }

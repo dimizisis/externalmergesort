@@ -42,7 +42,7 @@ public class VisualizationFrame {
 	private void initialize() {
 		frame = new JFrame();
 		frame.getContentPane().setBackground(SystemColor.inactiveCaption);
-		frame.setBounds(100, 100, 679, 490);
+		frame.setBounds(100, 100, 950, 490);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);
@@ -51,7 +51,7 @@ public class VisualizationFrame {
 		
 		JPanel initialPanel = new JPanel();
 		initialPanel.setBackground(SystemColor.inactiveCaption);
-		initialPanel.setBounds(10, 11, 643, 63);
+		initialPanel.setBounds(10, 11, 914, 63);
 		frame.getContentPane().add(initialPanel);
 		initialPanel.setLayout(new BoxLayout(initialPanel, BoxLayout.X_AXIS));
 		initialPanel.setBorder(BorderFactory.createLineBorder(Color.red));
@@ -60,7 +60,7 @@ public class VisualizationFrame {
 		
 		JPanel btnPassPanel = new JPanel();
 		btnPassPanel.setBackground(SystemColor.inactiveCaption);
-		btnPassPanel.setBounds(10, 85, 643, 38);
+		btnPassPanel.setBounds(10, 85, 914, 38);
 		frame.getContentPane().add(btnPassPanel);
 		btnPassPanel.setLayout(new BorderLayout(0, 0));
 		
@@ -72,7 +72,7 @@ public class VisualizationFrame {
 		
 		JPanel passPanel0 = new JPanel();
 		passPanel0.setBackground(SystemColor.inactiveCaption);
-		passPanel0.setBounds(10, 134, 643, 83);
+		passPanel0.setBounds(10, 134, 914, 83);
 		frame.getContentPane().add(passPanel0);
 		passPanel0.setLayout(new BoxLayout(passPanel0, BoxLayout.X_AXIS));
 		

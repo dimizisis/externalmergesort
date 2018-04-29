@@ -200,13 +200,11 @@ public class VisualizationFrame {
 
 				}
 				
-				TestThread b = new TestThread(records,array);
+				/* New thread for first pass visualization. */
 				
-			/*	for(int i=0;i<records.size();i++) {
-					records.get(i).setText("record"+i);
-				} */
+				PassZero pass0 = new PassZero(records,array);
 		        
-				new Thread(b).start();
+				new Thread(pass0).start();
 		            	
 		            	
 		            }
@@ -215,12 +213,12 @@ public class VisualizationFrame {
 		
 	}
 	
-	class TestThread implements Runnable{
+	class PassZero implements Runnable{
 		
 		private ArrayList<JTextField> records;
 		private ArrayList<JPanel> array;
 		
-		public TestThread(ArrayList<JTextField> records, ArrayList<JPanel> array) {
+		public PassZero(ArrayList<JTextField> records, ArrayList<JPanel> array) {
 			this.records = records;
 			this.array = array;
 		}
@@ -228,50 +226,64 @@ public class VisualizationFrame {
 
 		@Override
 		public void run() {
-					int i=0;
-					while(true){
-						
-						if (i<=N-1) array.get(i).setBackground(Color.green);
-						
-						if (i>0) array.get(i-1).setBackground(UIManager.getColor ("Panel.background"));
-						
-						if (i>=N) break;
-						
-						int min = Integer.min(Integer.parseInt(records.get(i+i).getText()), Integer.parseInt(records.get(i+i+1).getText()));
-						int max = Integer.max(Integer.parseInt(records.get(i+i).getText()), Integer.parseInt(records.get(i+i+1).getText()));
-						
-						System.out.println(min +" "+max);
-						
-						Timer timer1;
-						Timer timer2;
-					        
-					    if (records.get(i).getText().equals(String.valueOf(min))) {
-					    	timer1 = new Timer(4000, new listener1(i,max,records, i+1));
-					    	timer2 = new Timer(2000, new listener2(i,min,records, i));
-					    }
-					    else {
-					    	timer1 = new Timer(4000, new listener1(i,max,records, i));
-					    	timer2 = new Timer(2000, new listener2(i,min,records, i+1));
-					    }
-						
-					    timer1.setRepeats(false);
-					    timer2.setRepeats(false);
-					    timer1.start();
-					    timer2.start();
-					    
-					    try {
-							Thread.sleep(4000);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					        
-					    ++i;
-
-					}
-			
-		}
+			int i=0;
+			while(true){
 		
+				/* If we are not in last page, turn page's panel green. */
+				
+				if (i<=N-1) array.get(i).setBackground(Color.green);
+				
+				/* Every time we finish visiting a page, turn default panel color. */
+						
+				if (i>0) array.get(i-1).setBackground(UIManager.getColor ("Panel.background"));
+				
+				/* If there are no pages to visit, break. */
+						
+				if (i>=N) break;
+				
+				/* Finding min & max for sorting. */
+						
+				int min = Integer.min(Integer.parseInt(records.get(i+i).getText()), Integer.parseInt(records.get(i+i+1).getText()));
+				int max = Integer.max(Integer.parseInt(records.get(i+i).getText()), Integer.parseInt(records.get(i+i+1).getText()));
+
+				/* timer1 for max appearance, timer2 for min appearance. */
+				
+				Timer timer1;
+				Timer timer2;
+				
+				/* 
+				 * Need to know which text field has the minimum & maximum number, in order to clear
+				 * the text field, when we "move" the element to pass zero's panel
+				 */
+					        
+			    if (records.get(i+i).getText().equals(String.valueOf(min))) {
+			    	timer1 = new Timer(4000, new listener1(i,max,records, i+i+1));
+					timer2 = new Timer(2000, new listener2(i,min,records, i+i));
+				}
+			    else {
+					timer1 = new Timer(4000, new listener1(i,max,records, i+i));
+					timer2 = new Timer(2000, new listener2(i,min,records, i+i+1));
+				}
+			    
+			    /* Starting the timers... */
+					
+				timer1.setRepeats(false);
+				timer2.setRepeats(false);
+				timer1.start();
+				timer2.start();
+				
+				/* Thread needs to sleep for 4000 ms = maximum ms for visualization (timer1). */
+					    
+				try {
+					Thread.sleep(4000);
+				} catch (InterruptedException e) {
+					// Do nothing...	
+
+				}        
+				++i;
+			}
+		
+		}
 	}
 
 	class listener1 implements ActionListener {
@@ -289,7 +301,7 @@ public class VisualizationFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    
-		//	recs.get(recIndex).setText("");
+			recs.get(recIndex).setText("");
 			
 			if(N==1)
 				recs.get(3).setText(String.valueOf(max));
@@ -317,7 +329,7 @@ class listener2 implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			
 			
-		//	recs.get(recIndex).setText("");
+			recs.get(recIndex).setText("");
 			
 			if (N==1)
 				recs.get(2).setText(String.valueOf(min));

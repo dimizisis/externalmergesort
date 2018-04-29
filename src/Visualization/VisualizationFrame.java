@@ -300,11 +300,20 @@ public class VisualizationFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			
+			/* 
+			 * When we sort the array, every element is deleted from initial array, and it is
+			 * "moved" to pass zero's panel.
+			 */
 		    
 			recs.get(recIndex).setText("");
 			
+			/* If N==1, we know where we put max. */
+			
 			if(N==1)
 				recs.get(3).setText(String.valueOf(max));
+			
+			/* Else, 2*N+2*i+1 is the function that gives us the position of max text field. */
 			
 			else
 				recs.get(2*N+2*i+1).setText(String.valueOf(max));
@@ -328,11 +337,19 @@ class listener2 implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
+			/* 
+			 * When we sort the array, every element is deleted from initial array, and it is
+			 * "moved" to pass zero's panel.
+			 */
 			
 			recs.get(recIndex).setText("");
 			
+			/* If N==1, we know where we put min. */
+			
 			if (N==1)
 				recs.get(2).setText(String.valueOf(min));
+			
+			/* Else, 2*N+2*i is the function that gives us the position of min's text field. */
 			
 			else
 				recs.get(2*N+2*i).setText(String.valueOf(min));

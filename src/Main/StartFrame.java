@@ -58,7 +58,7 @@ public class StartFrame {
 		
 		JComboBox<String> bValue = new JComboBox<String>();
 		bValue.setEnabled(false);
-		bValue.setModel(new DefaultComboBoxModel<String>(new String[] {"3"}));
+		bValue.setModel(new DefaultComboBoxModel<String>(new String[] {"3", "4", "5", "6", "7", "8"}));
 		bValue.setBounds(101, 56, 141, 20);
 		frame.getContentPane().add(bValue);
 		

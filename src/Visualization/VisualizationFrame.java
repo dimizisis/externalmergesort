@@ -21,6 +21,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import javax.swing.JTextPane;
 
 public class VisualizationFrame {
 
@@ -32,11 +34,7 @@ public class VisualizationFrame {
 	 */
 	public VisualizationFrame(int N, int B) {
 		this.N = N;
-		
-		if (B <= N)
-			this.B = B;
-		else
-			this.B = N;
+		this.B = 3;
 		
 		initialize();
 	}
@@ -47,7 +45,7 @@ public class VisualizationFrame {
 	private void initialize() {
 		frame = new JFrame();
 		frame.getContentPane().setBackground(SystemColor.inactiveCaption);
-		frame.setBounds(100, 100, 950, 490);
+		frame.setBounds(100, 100, 950, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);
@@ -86,14 +84,15 @@ public class VisualizationFrame {
 		frame.getContentPane().add(btnPassPanel1);
 		btnPassPanel1.setLayout(new BorderLayout(0, 0));
 		
-		JButton btnNewButton = new JButton("Enter Pass 1");
-		btnNewButton.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-		btnPassPanel1.add(btnNewButton, BorderLayout.CENTER);
+		JButton btnEnterPass1 = new JButton("Enter Pass 1");
+		btnEnterPass1.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		btnPassPanel1.add(btnEnterPass1, BorderLayout.CENTER);
 		
 		JPanel passPanel1 = new JPanel();
 		passPanel1.setBackground(SystemColor.inactiveCaption);
-		passPanel1.setBounds(10, 277, 914, 110);
+		passPanel1.setBounds(10, 277, 914, 83);
 		frame.getContentPane().add(passPanel1);
+		passPanel1.setLayout(new BoxLayout(passPanel1, BoxLayout.X_AXIS));
 		
 		/* Keeping an ArrayList with panels (panels = array's pages). */
 		
@@ -207,7 +206,7 @@ public class VisualizationFrame {
 					
 					/* Centerize */
 					
-					array.get(array.size() - 1).setAlignmentX(Component.CENTER_ALIGNMENT);
+					array.get(array.size() - 1).setAlignmentX(Component.TOP_ALIGNMENT);
 					
 					/* Adding page to array panel. */
 					
@@ -222,26 +221,89 @@ public class VisualizationFrame {
 				/* New thread for first pass visualization. */
 				
 				TwoWayPassZero twoWayPass0 = new TwoWayPassZero(records,array);
-				PassZero pass0 = new PassZero(records,array);
-				
-				if (B == 3) { 
 					
 					// Enter pass 0 for B=3 (2-way)
 					new Thread(twoWayPass0).start();
-				}
-				
-				else {
-					
-					new Thread(pass0).start();
-				}
 		            	
-		            	
-		            }
+		         }
 
 		});
 		
+		btnEnterPass1.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				
+				for(int i=0;i<N;i++) {
+				
+				/* Add new page. */
+				
+				array.add(new JPanel());
+				
+				array.get(array.size() - 1).setPreferredSize(new Dimension(65,83));
+				
+				array.get(array.size() - 1).setMaximumSize(new Dimension(array.get(0).getSize()));
+				
+				array.get(array.size() - 1).setMinimumSize(new Dimension(array.get(0).getSize()));
+				
+				array.get(array.size() - 1).setLayout(new BoxLayout(array.get(array.size() - 1), BoxLayout.Y_AXIS));
+				
+				/* Visualization with 2 records. */
+				
+				/* Setting records' appearance. */
+				
+				JTextField tempRec = setRecordAppearance(new JTextField(""));
+				
+				/* Keeping records' text fields in ArrayList. */
+				
+				records.add(tempRec);
+				
+				/* Add records' text fields in page. */
+				
+				array.get(array.size() - 1).add(tempRec);
+				
+				/* Adding gap between records text fields. */
+				
+				array.get(array.size() - 1).add(Box.createRigidArea(new Dimension(3,0)));
+				
+				/* Setting records' appearance. */
+				
+				tempRec = setRecordAppearance(new JTextField(""));
+				
+				/* Add records' text fields in page. */
+				
+				records.add(tempRec);
+				
+				/* Add records' text fields in page. */
+				
+				array.get(array.size() - 1).add(tempRec);
+				
+				/* Centerize */
+				
+				array.get(array.size() - 1).setAlignmentX(Component.TOP_ALIGNMENT);
+				
+				/* Adding page to array panel. */
+				
+				passPanel1.add(array.get(array.size() - 1));
+				
+				/* Black border line for each page of array. */
+				
+				array.get(array.size() - 1).setBorder(BorderFactory.createLineBorder(Color.black));
+				
+				}
+				
+				
+				/* New thread for first pass visualization. */
+				
+				TwoWayPassOne twoWayPass1 = new TwoWayPassOne(records,array);
+					
+					// Enter pass 0 for B=3 (2-way)
+					new Thread(twoWayPass1).start();
+			}
+			
+		});
+		
 	}
-	
+
 	class TwoWayPassZero implements Runnable{
 		
 		private ArrayList<JTextField> records;
@@ -250,8 +312,7 @@ public class VisualizationFrame {
 		public TwoWayPassZero(ArrayList<JTextField> records, ArrayList<JPanel> array) {
 			this.records = records;
 			this.array = array;
-		}
-		
+		}		
 
 		@Override
 		public void run() {
@@ -273,7 +334,7 @@ public class VisualizationFrame {
 				/* Finding min & max for sorting. */
 						
 				int min = Integer.min(Integer.parseInt(records.get(2*i).getText()), Integer.parseInt(records.get(2*i+1).getText()));
-				int max = Integer.max(Integer.parseInt(records.get(2*i).getText()), Integer.parseInt(records.get(2*i+1).getText()));
+				int max = Integer.max(Integer.parseInt(records.get(2*i).getText()), Integer.parseInt(records.get(2*i+1).getText()));;
 
 				/* timer1 for max appearance, timer2 for min appearance. */
 				
@@ -315,77 +376,68 @@ public class VisualizationFrame {
 		}
 	}
 	
-class PassZero implements Runnable{
+	class TwoWayPassOne implements Runnable{
 		
 		private ArrayList<JTextField> records;
 		private ArrayList<JPanel> array;
 		
-		public PassZero(ArrayList<JTextField> records, ArrayList<JPanel> array) {
+		public TwoWayPassOne(ArrayList<JTextField> records, ArrayList<JPanel> array) {
 			this.records = records;
 			this.array = array;
-		}
-		
+		}		
 
 		@Override
 		public void run() {
 			
-			ArrayList<Integer> min = new ArrayList<Integer>();
-			ArrayList<Integer> max = new ArrayList<Integer>();
+			/* tempArray contains all elements of array (after pass 0). */
+			
+			ArrayList<Integer> tempArray = new ArrayList<Integer>();
+			
+			/* tempArrayIndex contains all indexes of records' text fields in records ArrayList. 
+			 * We need this ArrayList, in order to know which element from pass 0 is "moved" to array of pass 1
+			 * each time.
+			 * */
+			
+			ArrayList<Integer> tempArrayIndex = new ArrayList<Integer>();
+			
+			for(int j=2*N;j<=2*N+B;j++) {
+				tempArray.add(Integer.parseInt(records.get(j).getText()));
+				tempArrayIndex.add(j);
+			}
+			
+			for(int j=0;j<N;j++)
+				array.get(j+2).setBackground(Color.green);
+			
 			int i=0;
+			
+			/* k is used to trace the index of output's text field in records' ArrayList. */
+			
+			int k=4*N;
+			
 			while(true){
 
 				/* If there are no pages to visit, break. */
-				
+						
 				if (i>=N) break;
-		
-				/* If we are not in last page, turn page's panel green. */
 				
-				if (i<=N-1) {
-					for(int j=i;j<B;++j) {
-						
-						if (j==N) break;
-						
-						else array.get(j).setBackground(Color.green);
-					}
-				}
-				else
-					array.get(i).setBackground(Color.green);
+				/* Finding min & next min for sorting. */
 				
-				/* Every time we finish visiting a page, turn default panel color. */
-						
-				if (i>0) { 
+				int min = Collections.min(tempArray);
+				int minIndex = tempArrayIndex.get(tempArray.indexOf(min));
 				
-					for(int j=i;j<B;++j) {
-					
-						if (i<0) break;
-					
-						else {
-							try {
-								array.get(i-j).setBackground(UIManager.getColor ("Panel.background"));
-							}
-							catch(Exception e) {
-								break;
-							}
-						}
-					
-					}
-				}
-				
-				if(i==0) {
-				
-				/* Finding min & max for sorting. */
-					
-				for(int j=i;j<B;++j) {
-					min.add(Integer.min(Integer.parseInt(records.get(2*j+i).getText()), Integer.parseInt(records.get(i+2*j+1).getText())));
-					max.add(Integer.max(Integer.parseInt(records.get(i+2*j).getText()), Integer.parseInt(records.get(i+2*j+1).getText())));
-					System.out.println("i: "+i+" j: "+j+" min: "+min.get(min.size()-1)+" max: "+max.get(max.size()-1));
-				}	
-				
-				Collections.sort(min, Collections.reverseOrder());
-				Collections.sort(max, Collections.reverseOrder());
-				
-				}
+				/* We remove the min element, in order to find next min. */
 
+				tempArrayIndex.remove(tempArray.indexOf(min));
+				tempArray.remove(tempArray.indexOf(min));
+				
+				int nextMin = Collections.min(tempArray);
+				int nextMinIndex = tempArrayIndex.get(tempArray.indexOf(nextMin));
+				
+				/* We remove the min element, in order to find next min. */
+
+				tempArrayIndex.remove(tempArray.indexOf(nextMin));
+				tempArray.remove(tempArray.indexOf(nextMin));
+				
 				/* timer1 for max appearance, timer2 for min appearance. */
 				
 				Timer timer1;
@@ -394,9 +446,10 @@ class PassZero implements Runnable{
 				/* 
 				 * Need to know which text field has the minimum & maximum number, in order to clear
 				 * the text field, when we "move" the element to pass zero's panel
-				 */      
-			    	timer1 = new Timer(4000, new pass0ListenerMax(i,max,records, i+i+1));
-					timer2 = new Timer(2000, new pass0ListenerMin(i,min,records, i+i));
+				 */
+
+			    	timer1 = new Timer(4000, new twoWayPass1ListenerNextMin(nextMin,records, k+1, nextMinIndex));
+					timer2 = new Timer(2000, new twoWayPass1ListenerMin(min,records, k, minIndex));
 			    
 			    /* Starting the timers... */
 					
@@ -414,90 +467,20 @@ class PassZero implements Runnable{
 
 				}        
 				++i;
+				k=4*N+2;
+				
+				/* If we are done, turn all pages' panels default color. */
+				
+				if (i==N) {
+					
+					for(int j=0;j<N;j++) 
+						array.get(j+2).setBackground(UIManager.getColor ("Panel.background"));
+				}
 			}
-		
-		}
-	}
-
-class pass0ListenerMax implements ActionListener {
-	
-	private int recIndex;
-	private int i;
-	private ArrayList<Integer> max;
-	private ArrayList<JTextField> recs;
-	
-	public  pass0ListenerMax(int i, ArrayList<Integer> max, ArrayList<JTextField> recs, int recIndex) {
-		this.max = max;
-		this.recs = recs;
-		this.recIndex = recIndex;
-		this.i = i;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-		/* 
-		 * When we sort the array, every element is deleted from initial array, and it is
-		 * "moved" to pass zero's panel.
-		 */
-	    
-		recs.get(recIndex).setText("");
-		
-		/* If N==1, we know where we put max. */
-		
-		if(N==1)
-			recs.get(3).setText(String.valueOf(max.get(0)));
-		
-		/* Else, 2*N+2*i+1 is the function that gives us the position of max text field. */
-		
-		else {
-			recs.get(2*N+2*i+1).setText(String.valueOf(max.get(max.size()-1)));
-			max.remove(max.get(max.size()-1));
+			
 		}
 		
 	}
-	
-}
-
-class pass0ListenerMin implements ActionListener {
-	
-	private int recIndex;
-	private ArrayList<Integer> min;
-	private ArrayList<JTextField> recs;
-	private int i;
-	
-	public pass0ListenerMin(int i, ArrayList<Integer> min, ArrayList<JTextField> recs, int recIndex) {
-		this.min = min;
-		this.recs = recs;
-		this.recIndex = recIndex;
-		this.i = i;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-		/* 
-		 * When we sort the array, every element is deleted from initial array, and it is
-		 * "moved" to pass zero's panel.
-		 */
-		
-		recs.get(recIndex).setText("");
-		
-		/* If N==1, we know where we put min. */
-		
-		if (N==1)
-			recs.get(3).setText(String.valueOf(min.get(0)));
-		
-		/* Else, 2*N+2*i is the function that gives us the position of min's text field. */
-		
-		else {
-			recs.get(2*N+2*i).setText(String.valueOf(min.get(min.size()-1)));
-			min.remove(min.get(min.size()-1));
-		}
-
-	}
-	
-}
 
 	class twoWayPass0ListenerMax implements ActionListener {
 		
@@ -569,6 +552,78 @@ class twoWayPass0ListenerMin implements ActionListener {
 		}
 		
 	}
+
+class twoWayPass1ListenerNextMin implements ActionListener {
+	
+	private int nextMin, recIndex;
+	private ArrayList<JTextField> recs;
+	private int nextMinIndex;
+	
+	public  twoWayPass1ListenerNextMin(int nextMin, ArrayList<JTextField> recs, int recIndex, int nextMinIndex) {
+		this.nextMin = nextMin;
+		this.recs = recs;
+		this.recIndex = recIndex;
+		this.nextMinIndex = nextMinIndex;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		/* 
+		 * When we sort the array, every element is deleted from initial array, and it is
+		 * "moved" to pass zero's panel.
+		 */
+	    
+		recs.get(nextMinIndex).setText("");
+		
+		/* If N==1, we know where we put max. */
+		
+		if(N==1)
+			recs.get(3).setText(String.valueOf(nextMin));
+		
+		/* Else, 2*N+2*i+1 is the function that gives us the position of max text field. */
+		
+		else
+			recs.get(recIndex).setText(String.valueOf(nextMin));
+		
+	}
+	
+}
+
+class twoWayPass1ListenerMin implements ActionListener {
+	
+	private int min,minIndex,recIndex;
+	private ArrayList<JTextField> recs;
+	
+	public twoWayPass1ListenerMin(int min, ArrayList<JTextField> recs, int recIndex, int minIndex) {
+		this.min = min;
+		this.recs = recs;
+		this.recIndex = recIndex;
+		this.minIndex = minIndex;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		/* 
+		 * When we sort the array, every element is deleted from initial array, and it is
+		 * "moved" to pass zero's panel.
+		 */
+		
+		recs.get(minIndex).setText("");
+		
+		/* If N==1, we know where we put min. */
+		
+		if (N==1)
+			recs.get(2).setText(String.valueOf(min));
+		
+		/* Else, 2*N+2*i is the function that gives us the position of min's text field. */
+		
+		else
+			recs.get(recIndex).setText(String.valueOf(min));
+	}
+	
+}
 	
 	private JTextField setRecordAppearance(JTextField rec) {
 		

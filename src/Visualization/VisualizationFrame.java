@@ -1,7 +1,6 @@
 package Visualization;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.util.ArrayList;
@@ -20,12 +19,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
+
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import javax.swing.JTextPane;
 
 public class VisualizationFrame {
-
+	
+	
+	private final int MAXMSECONDS = 4000;
+	private final int MINMSECONDS = 2000;
 	private JFrame frame;
 	private int N, B;
 	
@@ -140,7 +142,7 @@ public class VisualizationFrame {
 			
 			/* Centerize */
 			
-			array.get(array.size() - 1).setAlignmentX(Component.CENTER_ALIGNMENT);
+			array.get(array.size() - 1).setAlignmentX(JComponent.CENTER_ALIGNMENT);
 			
 			/* Adding page to array panel. */
 			
@@ -206,7 +208,7 @@ public class VisualizationFrame {
 					
 					/* Centerize */
 					
-					array.get(array.size() - 1).setAlignmentX(Component.TOP_ALIGNMENT);
+					array.get(array.size() - 1).setAlignmentX(JComponent.RIGHT_ALIGNMENT);
 					
 					/* Adding page to array panel. */
 					
@@ -279,7 +281,7 @@ public class VisualizationFrame {
 				
 				/* Centerize */
 				
-				array.get(array.size() - 1).setAlignmentX(Component.TOP_ALIGNMENT);
+				array.get(array.size() - 1).setAlignmentX(JComponent.TOP_ALIGNMENT);
 				
 				/* Adding page to array panel. */
 				
@@ -347,12 +349,12 @@ public class VisualizationFrame {
 				 */
 					        
 			    if (records.get(2*i).getText().equals(String.valueOf(min))) {
-			    	timer1 = new Timer(4000, new twoWayPass0ListenerMax(i,max,records, 2*i+1));
-					timer2 = new Timer(2000, new twoWayPass0ListenerMin(i,min,records, 2*i));
+			    	timer1 = new Timer(MAXMSECONDS, new twoWayPass0ListenerMax(i,max,records, 2*i+1));
+					timer2 = new Timer(MINMSECONDS, new twoWayPass0ListenerMin(i,min,records, 2*i));
 				}
 			    else {
-					timer1 = new Timer(4000, new twoWayPass0ListenerMax(i,max,records, 2*i));
-					timer2 = new Timer(2000, new twoWayPass0ListenerMin(i,min,records, 2*i+1));
+					timer1 = new Timer(MAXMSECONDS, new twoWayPass0ListenerMax(i,max,records, 2*i));
+					timer2 = new Timer(MINMSECONDS, new twoWayPass0ListenerMin(i,min,records, 2*i+1));
 				}
 			    
 			    /* Starting the timers... */
@@ -365,7 +367,7 @@ public class VisualizationFrame {
 				/* Thread needs to sleep for 4000 ms = maximum ms for visualization (timer1). */
 					    
 				try {
-					Thread.sleep(4000);
+					Thread.sleep(MAXMSECONDS);
 				} catch (InterruptedException e) {
 					// Do nothing...	
 
@@ -405,8 +407,13 @@ public class VisualizationFrame {
 				tempArrayIndex.add(j);
 			}
 			
-			for(int j=0;j<N;j++)
-				array.get(j+2).setBackground(Color.green);
+			for(int j=0;j<N;j++) {
+				try {
+					array.get(j+2).setBackground(Color.green);
+				}catch(Exception e) {
+					array.get(j+1).setBackground(Color.green);
+				}
+			}
 			
 			int i=0;
 			
@@ -425,7 +432,9 @@ public class VisualizationFrame {
 				int min = Collections.min(tempArray);
 				int minIndex = tempArrayIndex.get(tempArray.indexOf(min));
 				
-				/* We remove the min element, in order to find next min. */
+				/* We remove the min element, in order to find next min. 
+				 * We also remove the index from indexes' ArrayList.
+				 * */
 
 				tempArrayIndex.remove(tempArray.indexOf(min));
 				tempArray.remove(tempArray.indexOf(min));
@@ -433,7 +442,9 @@ public class VisualizationFrame {
 				int nextMin = Collections.min(tempArray);
 				int nextMinIndex = tempArrayIndex.get(tempArray.indexOf(nextMin));
 				
-				/* We remove the min element, in order to find next min. */
+				/* We remove the min element, in order to find next min. 
+				 * We also remove the index from indexes' ArrayList.
+				 * */
 
 				tempArrayIndex.remove(tempArray.indexOf(nextMin));
 				tempArray.remove(tempArray.indexOf(nextMin));
@@ -448,8 +459,8 @@ public class VisualizationFrame {
 				 * the text field, when we "move" the element to pass zero's panel
 				 */
 
-			    	timer1 = new Timer(4000, new twoWayPass1ListenerNextMin(nextMin,records, k+1, nextMinIndex));
-					timer2 = new Timer(2000, new twoWayPass1ListenerMin(min,records, k, minIndex));
+			    	timer1 = new Timer(MAXMSECONDS, new twoWayPass1ListenerNextMin(nextMin,records, k+1, nextMinIndex));
+					timer2 = new Timer(MINMSECONDS, new twoWayPass1ListenerMin(min,records, k, minIndex));
 			    
 			    /* Starting the timers... */
 					
@@ -461,7 +472,7 @@ public class VisualizationFrame {
 				/* Thread needs to sleep for 4000 ms = maximum ms for visualization (timer1). */
 					    
 				try {
-					Thread.sleep(4000);
+					Thread.sleep(MAXMSECONDS);
 				} catch (InterruptedException e) {
 					// Do nothing...	
 
@@ -473,8 +484,13 @@ public class VisualizationFrame {
 				
 				if (i==N) {
 					
-					for(int j=0;j<N;j++) 
-						array.get(j+2).setBackground(UIManager.getColor ("Panel.background"));
+					for(int j=0;j<N;j++) { 
+						try {
+							array.get(j+2).setBackground(UIManager.getColor ("Panel.background"));
+						}catch(Exception e) {
+							array.get(j+1).setBackground(UIManager.getColor ("Panel.background"));
+						}
+					}
 				}
 			}
 			

@@ -424,6 +424,8 @@ public class VisualizationFrame {
 			
 			int k=4*N;
 			
+			int j=N;
+			
 			while(true){
 						
 				/* If there are no pages to visit, break. */
@@ -440,9 +442,40 @@ public class VisualizationFrame {
 				}
 				
 				if (endOfB==0) {
-					
-					int j=N;
+
+					int numberOfGreens=2;
 					while(true) {
+		
+						if(j == 2*N-1) {
+							
+							/* Turn all previous checked pages (panel) gray. */
+							
+							for(int p=0;p<j-1;++p) array.get(p).setBackground(UIManager.getColor ("Panel.background"));
+							
+							/* If green, turn it gray (panel's default color). */
+							
+							if((array.get(j).getBackground()).getRGB() == Color.green.getRGB()) {
+								array.get(j).setBackground(UIManager.getColor ("Panel.background"));
+								break;
+							}
+							
+							/* If gray, turn it green */
+							
+							else if(array.get(j).getBackground().getRGB() == UIManager.getColor("Panel.background").getRGB()) {
+								array.get(j).setBackground(Color.green);
+								tempArray.add(Integer.parseInt(records.get(2*j).getText()));
+								tempArrayIndex.add(2*j);
+								tempArray.add(Integer.parseInt(records.get(2*j+1).getText()));
+								tempArrayIndex.add(2*j+1);	
+								break;
+							}
+						}
+						
+						else {
+							
+						/* Turn all previous checked pages (panel) gray. */
+							
+						for(int p=0;p<j-1;++p) array.get(p).setBackground(UIManager.getColor ("Panel.background"));
 						
 						/* If green, turn it gray (panel's default color). */
 						
@@ -454,19 +487,24 @@ public class VisualizationFrame {
 						else if(array.get(j).getBackground().getRGB() == UIManager.getColor("Panel.background").getRGB()) {
 							array.get(j).setBackground(Color.green);
 							tempArray.add(Integer.parseInt(records.get(2*j).getText()));
+							System.out.println(""+j);
 							tempArrayIndex.add(2*j);
 							tempArray.add(Integer.parseInt(records.get(2*j+1).getText()));
 							tempArrayIndex.add(2*j+1);
+							--numberOfGreens;
 							
 							/* If all pages checked, break. */
 							
-							if(j == 2*N-1)
+							if(numberOfGreens == 0) 
 								break;
+							
+						}
+							
 						}
 						++j;
 					}
 					
-					endOfB = B;
+					endOfB = B-1;
 				}
 				
 				/* Finding min & next min for sorting. */

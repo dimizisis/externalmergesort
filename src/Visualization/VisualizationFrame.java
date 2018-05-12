@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -30,14 +31,15 @@ public class VisualizationFrame {
 	private final int MINMSECONDS = 1000;
 	private JFrame frame;
 	private int N, B;
+	private boolean generateRandomArray;
 	
 	/**
 	 * Create the application.
 	 */
-	public VisualizationFrame(int N, int B) {
+	public VisualizationFrame(int N, int B, boolean generateRandomArray) {
 		this.N = N;
 		this.B = 3;
-		
+		this.generateRandomArray = generateRandomArray;
 		initialize();
 	}
 
@@ -47,7 +49,7 @@ public class VisualizationFrame {
 	private void initialize() {
 		frame = new JFrame();
 		frame.getContentPane().setBackground(SystemColor.inactiveCaption);
-		frame.setBounds(100, 100, 950, 600);
+		frame.setBounds(100, 100, 950, 750);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);
@@ -82,6 +84,7 @@ public class VisualizationFrame {
 		passPanel0.setLayout(new BoxLayout(passPanel0, BoxLayout.X_AXIS));
 		
 		JPanel btnPassPanel1 = new JPanel();
+		btnPassPanel1.setBackground(SystemColor.inactiveCaption);
 		btnPassPanel1.setBounds(10, 228, 914, 38);
 		frame.getContentPane().add(btnPassPanel1);
 		btnPassPanel1.setLayout(new BorderLayout(0, 0));
@@ -95,6 +98,22 @@ public class VisualizationFrame {
 		passPanel1.setBounds(10, 277, 914, 83);
 		frame.getContentPane().add(passPanel1);
 		passPanel1.setLayout(new BoxLayout(passPanel1, BoxLayout.X_AXIS));
+		
+		JPanel btnPassPanel2 = new JPanel();
+		btnPassPanel2.setBackground(SystemColor.inactiveCaption);
+		btnPassPanel2.setBounds(10, 371, 914, 38);
+		frame.getContentPane().add(btnPassPanel2);
+		btnPassPanel2.setLayout(new BorderLayout(0, 0));
+		
+		JButton btnEnterPass2 = new JButton("Enter Pass 2");
+		btnEnterPass2.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		btnPassPanel2.add(btnEnterPass2, BorderLayout.CENTER);
+		
+		JPanel passPanel2 = new JPanel();
+		passPanel2.setBackground(SystemColor.inactiveCaption);
+		passPanel2.setBounds(10, 420, 914, 280);
+		frame.getContentPane().add(passPanel2);
+		passPanel2.setLayout(new BoxLayout(passPanel2, BoxLayout.X_AXIS));
 		
 		/* Keeping an ArrayList with panels (panels = array's pages). */
 		
@@ -154,13 +173,27 @@ public class VisualizationFrame {
 			
 			/* Adding gap between pages. */
 			
-			array.get(array.size() - 1).add(Box.createRigidArea(new Dimension(10,0)));
+			array.get(array.size() - 1).add(Box.createRigidArea(new Dimension(10,0)));		
 
 		}
+		
+		if (generateRandomArray) {
+			for(int x=0;x<2*N;++x)
+				records.get(x).setText(String.valueOf(new Random().nextInt(99 + 1)));
+		}
+		
+		if (N == 1) {
+			btnEnterPass1.setVisible(false);
+			btnEnterPass2.setVisible(false);
+		}
+		else if (N == 2)
+			btnEnterPass2.setVisible(false);
 		
 		btnEnterPass0.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
+				
+				btnEnterPass0.setEnabled(false);
 				
 				for(int i=0;i<N;i++) {
 					
@@ -208,7 +241,7 @@ public class VisualizationFrame {
 					
 					/* Centerize */
 					
-					array.get(array.size() - 1).setAlignmentX(JComponent.RIGHT_ALIGNMENT);
+					array.get(array.size() - 1).setAlignmentX(JComponent.CENTER_ALIGNMENT);
 					
 					/* Adding page to array panel. */
 					
@@ -234,6 +267,8 @@ public class VisualizationFrame {
 		btnEnterPass1.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
+				
+				btnEnterPass1.setEnabled(false);
 				
 				for(int i=0;i<N;i++) {
 				
@@ -300,6 +335,102 @@ public class VisualizationFrame {
 					
 					// Enter pass 0 for B=3 (2-way)
 					new Thread(twoWayPass1).start();
+			}
+			
+		});
+		
+		btnEnterPass2.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				
+				for(int i=0;i<B-1;i++) {
+				
+				/* Add new page. */
+				
+				array.add(new JPanel());
+				
+				array.get(array.size() - 1).setPreferredSize(new Dimension(95,200));
+				
+			//	array.get(array.size() - 1).setMaximumSize(new Dimension(array.get(0).getSize()));
+				
+			//	array.get(array.size() - 1).setMinimumSize(new Dimension(array.get(0).getSize()));
+				
+				array.get(array.size() - 1).setLayout(new BoxLayout(array.get(array.size() - 1), BoxLayout.Y_AXIS));
+				
+				/* Visualization with 2 records. */
+				
+				/* Setting records' appearance. */
+				
+				JTextField tempRec = setRecordAppearance(new JTextField(""));
+				
+				/* Keeping records' text fields in ArrayList. */
+				
+				records.add(tempRec);
+				
+				/* Add records' text fields in page. */
+				
+				array.get(array.size() - 1).add(tempRec);
+				
+				/* Adding gap between records text fields. */
+				
+				array.get(array.size() - 1).add(Box.createRigidArea(new Dimension(3,0)));
+				
+				/* Setting records' appearance. */
+				
+				tempRec = setRecordAppearance(new JTextField(""));
+				
+				/* Add records' text fields in page. */
+				
+				records.add(tempRec);
+				
+				/* Add records' text fields in page. */
+				
+				array.get(array.size() - 1).add(tempRec);
+				
+				/* Setting records' appearance. */
+				
+				tempRec = setRecordAppearance(new JTextField(""));
+				
+				/* Add records' text fields in page. */
+				
+				records.add(tempRec);
+				
+				/* Add records' text fields in page. */
+				
+				array.get(array.size() - 1).add(tempRec);
+				
+				/* Setting records' appearance. */
+				
+				tempRec = setRecordAppearance(new JTextField(""));
+				
+				/* Add records' text fields in page. */
+				
+				records.add(tempRec);
+				
+				/* Add records' text fields in page. */
+				
+				array.get(array.size() - 1).add(tempRec);
+				
+				/* Centerize */
+				
+				array.get(array.size() - 1).setAlignmentX(JComponent.CENTER_ALIGNMENT);
+				
+				/* Adding page to array panel. */
+				
+				passPanel2.add(array.get(array.size() - 1));
+				
+				/* Black border line for each page of array. */
+				
+				array.get(array.size() - 1).setBorder(BorderFactory.createLineBorder(Color.black));
+				
+				}			
+				
+				/* New thread for first pass visualization. */
+				
+			//	TwoWayPassOne twoWayPass1 = new TwoWayPassOne(records,array);
+					
+					// Enter pass 0 for B=3 (2-way)
+				//	new Thread(twoWayPass1).start();
 			}
 			
 		});
@@ -487,7 +618,6 @@ public class VisualizationFrame {
 						else if(array.get(j).getBackground().getRGB() == UIManager.getColor("Panel.background").getRGB()) {
 							array.get(j).setBackground(Color.green);
 							tempArray.add(Integer.parseInt(records.get(2*j).getText()));
-							System.out.println(""+j);
 							tempArrayIndex.add(2*j);
 							tempArray.add(Integer.parseInt(records.get(2*j+1).getText()));
 							tempArrayIndex.add(2*j+1);

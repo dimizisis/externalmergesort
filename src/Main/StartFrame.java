@@ -15,6 +15,7 @@ import javax.swing.SwingConstants;
 import Visualization.VisualizationFrame;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 
 public class StartFrame {
 
@@ -48,12 +49,12 @@ public class StartFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 321, 225);
+		frame.setBounds(100, 100, 321, 250);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JButton btnStart = new JButton("Start");
-		btnStart.setBounds(101, 152, 89, 23);
+		btnStart.setBounds(101, 177, 89, 23);
 		frame.getContentPane().add(btnStart);
 		
 		JComboBox<String> bValue = new JComboBox<String>();
@@ -79,15 +80,19 @@ public class StartFrame {
 		nValue.setBounds(101, 90, 141, 20);
 		frame.getContentPane().add(nValue);
 		
+		JCheckBox chckbxGenerateRandomArray = new JCheckBox("Generate Random Array");
+		chckbxGenerateRandomArray.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		chckbxGenerateRandomArray.setBounds(66, 130, 163, 23);
+		frame.getContentPane().add(chckbxGenerateRandomArray);
+		
 		/* Open visualization frame. */
 		
 		btnStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                frame.dispose();
-               new VisualizationFrame(Integer.parseInt((String)nValue.getSelectedItem()), Integer.parseInt((String)bValue.getSelectedItem()));
+               new VisualizationFrame(Integer.parseInt((String)nValue.getSelectedItem()), Integer.parseInt((String)bValue.getSelectedItem()), chckbxGenerateRandomArray.isSelected());
             }
         });
 	}
-
 }

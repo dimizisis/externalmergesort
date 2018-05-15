@@ -91,6 +91,7 @@ public class VisualizationFrame {
 		
 		JButton btnEnterPass1 = new JButton("Enter Pass 1");
 		btnEnterPass1.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+//		btnEnterPass1.setEnabled(false);
 		btnPassPanel1.add(btnEnterPass1, BorderLayout.CENTER);
 		
 		JPanel passPanel1 = new JPanel();
@@ -107,6 +108,7 @@ public class VisualizationFrame {
 		
 		JButton btnEnterPass2 = new JButton("Enter Pass 2");
 		btnEnterPass2.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+//		btnEnterPass2.setEnabled(false);
 		btnPassPanel2.add(btnEnterPass2, BorderLayout.CENTER);
 		
 		JPanel passPanel2 = new JPanel();
@@ -258,8 +260,10 @@ public class VisualizationFrame {
 				TwoWayPassZero twoWayPass0 = new TwoWayPassZero(records,array);
 					
 					// Enter pass 0 for B=3 (2-way)
-					new Thread(twoWayPass0).start();
-		            	
+					Thread pass0 = new Thread(twoWayPass0);
+		            
+					pass0.start();
+						
 		         }
 
 		});
@@ -316,7 +320,7 @@ public class VisualizationFrame {
 				
 				/* Centerize */
 				
-				array.get(array.size() - 1).setAlignmentX(JComponent.TOP_ALIGNMENT);
+				array.get(array.size() - 1).setAlignmentX(JComponent.CENTER_ALIGNMENT);
 				
 				/* Adding page to array panel. */
 				
@@ -334,7 +338,9 @@ public class VisualizationFrame {
 				TwoWayPassOne twoWayPass1 = new TwoWayPassOne(records,array);
 					
 					// Enter pass 0 for B=3 (2-way)
-					new Thread(twoWayPass1).start();
+					Thread pass1 = new Thread(twoWayPass1);
+					
+					pass1.start();
 			}
 			
 		});
@@ -427,10 +433,10 @@ public class VisualizationFrame {
 				
 				/* New thread for first pass visualization. */
 				
-			//	TwoWayPassOne twoWayPass1 = new TwoWayPassOne(records,array);
+				TwoWayPassTwo twoWayPass2 = new TwoWayPassTwo(records,array);
 					
 					// Enter pass 0 for B=3 (2-way)
-				//	new Thread(twoWayPass1).start();
+					new Thread(twoWayPass2).start();
 			}
 			
 		});
@@ -565,7 +571,7 @@ public class VisualizationFrame {
 					
 					/* Make all pages (panels) gray before ending. */
 					
-					for(int p=0;p<=B-1;++p) array.get(2*N-1-p).setBackground(UIManager.getColor ("Panel.background"));
+					for(int p=0;p<=B-1;++p) array.get(2*N-1-p).setBackground(UIManager.getColor ("Panel.background"));			
 					
 					/* Break when finish. */
 					
@@ -574,7 +580,7 @@ public class VisualizationFrame {
 				
 				if (endOfB==0) {
 
-					int numberOfGreens=2;
+					int numberOfGreens=B-1;
 					while(true) {
 		
 						if(j == 2*N-1) {
@@ -689,6 +695,193 @@ public class VisualizationFrame {
 				}        
 				++i;
 				k=4*N+2*i;			
+				endOfB--;
+			}
+			
+		}
+		
+	}
+	
+class TwoWayPassTwo implements Runnable{
+		
+		private ArrayList<JTextField> records;
+		private ArrayList<JPanel> array;
+		
+		public TwoWayPassTwo(ArrayList<JTextField> records, ArrayList<JPanel> array) {
+			this.records = records;
+			this.array = array;
+		}		
+
+		@Override
+		public void run() {
+			
+			/* tempArray contains all elements of array (after pass 0). */
+			
+			ArrayList<Integer> tempArray = new ArrayList<Integer>();
+			
+			/* tempArrayIndex contains all indexes of records' text fields in records ArrayList. 
+			 * We need this ArrayList, in order to know which element from pass 0 is "moved" to array of pass 1
+			 * each time.
+			 * */
+			
+			ArrayList<Integer> tempArrayIndex = new ArrayList<Integer>();
+			
+			/* Initializing ArrayLists. */
+			
+			for(int j=4*N;j<=4*N+B;j++) {
+				tempArray.add(Integer.parseInt(records.get(j).getText()));
+				tempArrayIndex.add(j);
+			}
+			
+			/* Making green panels in use. */
+			
+			for(int j=2*N;j<2*N+(B-1);j++)
+				array.get(j).setBackground(Color.green);
+			
+			int i=0;
+			
+			/* With endofB variable we check how many pages left to read each time. */
+			
+			int endOfB=B-1;
+			
+			/* k is used to trace the index of output's text field in records' ArrayList. */
+			
+			int k=6*N;
+			
+			int j=2*N;
+			
+			while(true){
+						
+				/* If there are no pages to visit, break. */
+						
+				if (i>=N) {
+					
+					/* Make all pages (panels) gray before ending. */
+					
+					for(int p=0;p<=B-1;++p) array.get(3*N-1-p).setBackground(UIManager.getColor ("Panel.background"));			
+					
+					/* Break when finish. */
+					
+					break;
+				}
+				
+				if (endOfB==0) {
+
+					int numberOfGreens=B-1;
+					while(true) {
+		
+						if(j == 3*N-1) {
+							
+							/* Turn all previous checked pages (panel) gray. */
+							
+							for(int p=0;p<j-1;++p) array.get(p).setBackground(UIManager.getColor ("Panel.background"));
+							
+							/* If green, turn it gray (panel's default color). */
+							
+							if((array.get(j).getBackground()).getRGB() == Color.green.getRGB()) {
+								array.get(j).setBackground(UIManager.getColor ("Panel.background"));
+								break;
+							}
+							
+							/* If gray, turn it green */
+							
+							else if(array.get(j).getBackground().getRGB() == UIManager.getColor("Panel.background").getRGB()) {
+								array.get(j).setBackground(Color.green);
+								tempArray.add(Integer.parseInt(records.get(2*j).getText()));
+								tempArrayIndex.add(2*j);
+								tempArray.add(Integer.parseInt(records.get(2*j+1).getText()));
+								tempArrayIndex.add(2*j+1);	
+								break;
+							}
+						}
+						
+						else {
+							
+						/* Turn all previous checked pages (panel) gray. */
+							
+						for(int p=0;p<j-1;++p) array.get(p).setBackground(UIManager.getColor ("Panel.background"));
+						
+						/* If green, turn it gray (panel's default color). */
+						
+						if((array.get(j).getBackground()).getRGB() == Color.green.getRGB())
+							array.get(j).setBackground(UIManager.getColor ("Panel.background"));
+						
+						/* If gray, turn it green */
+						
+						else if(array.get(j).getBackground().getRGB() == UIManager.getColor("Panel.background").getRGB()) {
+							array.get(j).setBackground(Color.green);
+							tempArray.add(Integer.parseInt(records.get(2*j).getText()));
+							tempArrayIndex.add(2*j);
+							tempArray.add(Integer.parseInt(records.get(2*j+1).getText()));
+							tempArrayIndex.add(2*j+1);
+							--numberOfGreens;
+							
+							/* If all pages checked, break. */
+							
+							if(numberOfGreens == 0) 
+								break;
+							
+						}
+							
+						}
+						++j;
+					}
+					
+					endOfB = B-1;
+				}
+				
+				/* Finding min & next min for sorting. */
+				
+				int min = Collections.min(tempArray);
+				int minIndex = tempArrayIndex.get(tempArray.indexOf(min));
+				
+				/* We remove the min element, in order to find next min. 
+				 * We also remove the index from indexes' ArrayList.
+				 * */
+
+				tempArrayIndex.remove(tempArray.indexOf(min));
+				tempArray.remove(tempArray.indexOf(min));
+				
+				int nextMin = Collections.min(tempArray);
+				int nextMinIndex = tempArrayIndex.get(tempArray.indexOf(nextMin));
+				
+				/* We remove the min element, in order to find next min. 
+				 * We also remove the index from indexes' ArrayList.
+				 * */
+
+				tempArrayIndex.remove(tempArray.indexOf(nextMin));
+				tempArray.remove(tempArray.indexOf(nextMin));
+				
+				/* timer1 for max appearance, timer2 for min appearance. */
+				
+				Timer timer1;
+				Timer timer2;
+				
+				/* 
+				 * Need to know which text field has the minimum & maximum number, in order to clear
+				 * the text field, when we "move" the element to pass zero's panel
+				 */
+
+			    	timer1 = new Timer(MAXMSECONDS, new twoWayPass1ListenerNextMin(nextMin,records, k+1, nextMinIndex));
+					timer2 = new Timer(MINMSECONDS, new twoWayPass1ListenerMin(min,records, k, minIndex));
+			    
+			    /* Starting the timers... */
+					
+				timer1.setRepeats(false);
+				timer2.setRepeats(false);
+				timer1.start();
+				timer2.start();
+				
+				/* Thread needs to sleep for 4000 ms = maximum ms for visualization (timer1). */
+					    
+				try {
+					Thread.sleep(MAXMSECONDS);
+				} catch (InterruptedException e) {
+					// Do nothing...	
+
+				}        
+				++i;
+				k=6*N+2*i;
 				endOfB--;
 			}
 			
@@ -838,6 +1031,78 @@ class twoWayPass1ListenerMin implements ActionListener {
 	}
 	
 }
+
+class twoWayPass2ListenerNextMin implements ActionListener {
+	
+	private int nextMin, recIndex;
+	private ArrayList<JTextField> recs;
+	private int nextMinIndex;
+	
+	public  twoWayPass2ListenerNextMin(int nextMin, ArrayList<JTextField> recs, int recIndex, int nextMinIndex) {
+		this.nextMin = nextMin;
+		this.recs = recs;
+		this.recIndex = recIndex;
+		this.nextMinIndex = nextMinIndex;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		/* 
+		 * When we sort the array, every element is deleted from initial array, and it is
+		 * "moved" to pass zero's panel.
+		 */
+	    
+		recs.get(nextMinIndex).setText("");
+		
+		/* If N==1, we know where we put max. */
+		
+		if(N==1)
+			recs.get(3).setText(String.valueOf(nextMin));
+		
+		/* Else, 2*N+2*i+1 is the function that gives us the position of max text field. */
+		
+		else
+			recs.get(recIndex).setText(String.valueOf(nextMin));
+		
+	}
+	
+}
+
+class twoWayPass2ListenerMin implements ActionListener {
+	
+	private int min,minIndex,recIndex;
+	private ArrayList<JTextField> recs;
+	
+	public twoWayPass2ListenerMin(int min, ArrayList<JTextField> recs, int recIndex, int minIndex) {
+		this.min = min;
+		this.recs = recs;
+		this.recIndex = recIndex;
+		this.minIndex = minIndex;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		/* 
+		 * When we sort the array, every element is deleted from initial array, and it is
+		 * "moved" to pass zero's panel.
+		 */
+		
+		recs.get(minIndex).setText("");
+		
+		/* If N==1, we know where we put min. */
+		
+		if (N==1)
+			recs.get(2).setText(String.valueOf(min));
+		
+		/* Else, 2*N+2*i is the function that gives us the position of min's text field. */
+		
+		else
+			recs.get(recIndex).setText(String.valueOf(min));
+	}
+	
+}
 	
 	private JTextField setRecordAppearance(JTextField rec) {
 		
@@ -847,6 +1112,7 @@ class twoWayPass1ListenerMin implements ActionListener {
 		
 		rec.setFont(font);
 		rec.setHorizontalAlignment(JTextField.CENTER);
+		rec.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		rec.setPreferredSize(new Dimension(40,33));
 		rec.setMaximumSize(new Dimension(rec.getPreferredSize()));
 		

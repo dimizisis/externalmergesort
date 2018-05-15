@@ -27,8 +27,8 @@ import java.awt.BorderLayout;
 public class VisualizationFrame {
 	
 	
-	private final int MAXMSECONDS = 2000;
-	private final int MINMSECONDS = 1000;
+	private final int MAXMSECONDS = 200;
+	private final int MINMSECONDS = 100;
 	private JFrame frame;
 	private int N, B;
 	private boolean generateRandomArray;
@@ -541,21 +541,25 @@ public class VisualizationFrame {
 			
 			/* Initializing ArrayLists. */
 			
-			for(int j=2*N;j<=2*N+B;j++) {
-				tempArray.add(Integer.parseInt(records.get(j).getText()));
-				tempArrayIndex.add(j);
+			for(int j=2*N;j<=2*N+2*B+1;j++) {
+				try {
+					tempArray.add(Integer.parseInt(records.get(j).getText()));
+					tempArrayIndex.add(j);
+				}catch(Exception e) {
+					break;
+				}
 			}
 			
 			/* Making green panels in use. */
 			
-			for(int j=N;j<N+(B-1);j++)
+			for(int j=N;j<N+2*(B-1) && j<=2*N-1;j++)
 				array.get(j).setBackground(Color.green);
 			
 			int i=0;
 			
 			/* With endofB variable we check how many pages left to read each time. */
 			
-			int endOfB=B-1;
+			int endOfB=2*(B-1);
 			
 			/* k is used to trace the index of output's text field in records' ArrayList. */
 			
@@ -571,7 +575,13 @@ public class VisualizationFrame {
 					
 					/* Make all pages (panels) gray before ending. */
 					
-					for(int p=0;p<=B-1;++p) array.get(2*N-1-p).setBackground(UIManager.getColor ("Panel.background"));			
+					for(int p=0;p<=2*(B-1);++p) {
+						try {
+							array.get(2*N-1-p).setBackground(UIManager.getColor ("Panel.background"));	
+						}catch (Exception e) {
+							break;
+						}
+					}
 					
 					/* Break when finish. */
 					
@@ -580,14 +590,14 @@ public class VisualizationFrame {
 				
 				if (endOfB==0) {
 
-					int numberOfGreens=B-1;
+					int numberOfGreens=2*(B-1);
 					while(true) {
 		
 						if(j == 2*N-1) {
 							
 							/* Turn all previous checked pages (panel) gray. */
 							
-							for(int p=0;p<j-1;++p) array.get(p).setBackground(UIManager.getColor ("Panel.background"));
+					//		for(int p=0;p<j-1;++p) array.get(p).setBackground(UIManager.getColor ("Panel.background"));
 							
 							/* If green, turn it gray (panel's default color). */
 							
@@ -622,25 +632,26 @@ public class VisualizationFrame {
 						/* If gray, turn it green */
 						
 						else if(array.get(j).getBackground().getRGB() == UIManager.getColor("Panel.background").getRGB()) {
-							array.get(j).setBackground(Color.green);
-							tempArray.add(Integer.parseInt(records.get(2*j).getText()));
-							tempArrayIndex.add(2*j);
-							tempArray.add(Integer.parseInt(records.get(2*j+1).getText()));
-							tempArrayIndex.add(2*j+1);
-							--numberOfGreens;
+							for(int x=j;x!=2*N-1;++x) {
+								array.get(x).setBackground(Color.green);
+								tempArray.add(Integer.parseInt(records.get(2*x).getText()));
+								tempArrayIndex.add(2*x);
+								tempArray.add(Integer.parseInt(records.get(2*x+1).getText()));
+								tempArrayIndex.add(2*x+1);	
+								--numberOfGreens;
+							}
 							
 							/* If all pages checked, break. */
 							
 							if(numberOfGreens == 0) 
 								break;
-							
 						}
 							
 						}
 						++j;
 					}
 					
-					endOfB = B-1;
+					endOfB = 2*(B-1);
 				}
 				
 				/* Finding min & next min for sorting. */
